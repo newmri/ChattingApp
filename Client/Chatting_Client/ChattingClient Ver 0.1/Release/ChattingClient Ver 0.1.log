@@ -1,0 +1,4 @@
+﻿  ChattingClient Ver 0.1Dlg.cpp
+ChattingClient Ver 0.1Dlg.obj : error LNK2001: unresolved external symbol _mysql_init@4
+ChattingClient Ver 0.1Dlg.obj : error LNK2001: unresolved external symbol _mysql_real_connect@32
+P:\프로그램\ChattingClient Ver 0.1\Release\ChattingClient Ver 0.1.exe : fatal error LNK1120: 2 unresolved externals

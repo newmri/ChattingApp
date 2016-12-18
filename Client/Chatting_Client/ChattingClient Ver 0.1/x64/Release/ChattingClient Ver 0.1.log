@@ -1,0 +1,18 @@
+﻿  stdafx.cpp
+  ChattingClient Ver 0.1.cpp
+  ChattingClient Ver 0.1Dlg.cpp
+  Client.cpp
+  DEnroll.cpp
+DEnroll.cpp(70): warning C4477: 'sprintf_s' : format string '%ls' requires an argument of type 'wchar_t *', but variadic argument 1 has type 'CString'
+DEnroll.cpp(70): warning C4477: 'sprintf_s' : format string '%ls' requires an argument of type 'wchar_t *', but variadic argument 2 has type 'CString'
+DEnroll.cpp(70): warning C4477: 'sprintf_s' : format string '%ls' requires an argument of type 'wchar_t *', but variadic argument 3 has type 'CString'
+  userExit.cpp
+userExit.cpp(67): warning C4477: 'sprintf_s' : format string '%ls' requires an argument of type 'wchar_t *', but variadic argument 1 has type 'CString'
+userExit.cpp(67): warning C4477: 'sprintf_s' : format string '%ls' requires an argument of type 'wchar_t *', but variadic argument 2 has type 'CString'
+  Generating code
+  228 of 233 functions (97.9%) were compiled, the rest were copied from previous compilation.
+    31 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  ChattingClient Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Client\Chatting_Client\x64\Release\ChattingClient Ver 0.1.exe
+  ChattingClient Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Client\Chatting_Client\x64\Release\ChattingClient Ver 0.1.pdb (Full PDB)
