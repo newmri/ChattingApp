@@ -1,20 +1,22 @@
 #pragma once
-#include<WinSock2.h>
-
+#include <Windows.h>
+#pragma comment(lib,"ws2_32")
 class ClientSocket {
+private:
+	SOCKET sock;
+	SOCKADDR_IN serveraddr;
+	char* SERVERIP = "127.0.0.1";
+	enum { SERVERPORT = 9190 };
 public:
-	ClientSocket(SOCKET sock = INVALID_SOCKET);
-	~ClientSocket();
+	ClientSocket(void);
+	~ClientSocket(void);
 
-	//void Attach(SOCKET sock);
-	bool Create();
-	bool Connect(const char *ip, unsigned short port);
-	bool IsValid() {
-		return mSock != INVALID_SOCKET;
-	}
-	void Close();
+	void Init(void);
+	int Connect(void);
+	void Close(void);
 	int Send(const char*buf, int size);
 	int Recv(char*buf, int size);
-public:
-	SOCKET mSock;
+	void err_quit(char*) const;
+	void err_display(char*) const;
+
 };

@@ -6,6 +6,7 @@
 #include "ChattingClient Ver 0.1.h"
 #include "ChattingClient Ver 0.1Dlg.h"
 #include "afxdialogex.h"
+#include "Client.h"
 #include "DEnroll.h"
 #include "userExit.h"
 #ifdef _DEBUG
@@ -84,7 +85,9 @@ END_MESSAGE_MAP()
 BOOL CChattingClientVer01Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
+	ClientSocket sock;
+	sock.Init();
+	sock.Connect();
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
