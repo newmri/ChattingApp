@@ -1,20 +1,29 @@
 #include "Sock.h"
 
-Sock::Sock(void) : socklist(), listen_sock() {};
+Sock::Sock(void) : socklist(),listen_sock(INVALID_SOCKET) {};
+Sock::~Sock(void)
+{
+	WSACleanup();
+}
 
-void Sock::Init(void)
+bool Sock::Init(void)
 {
 
 
 	int retval;
 	// winsock initial
 	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0){
+		err_quit("[에러] 위치 : Sock::Init, 이유 : WSAStartup() 함수 실패");
+		return false;
+	}
 
 	// socket()
 	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_sock == INVALID_SOCKET)err_quit("socket()");
+	if (listen_sock == INVALID_SOCKET){
+		err_quit("[에러] 위치 : Sock::Init, 이유 : socket() 함수 실패");
+		return false;
+	}
 
 	// bind()
 	SOCKADDR_IN serveraddr;
@@ -23,40 +32,63 @@ void Sock::Init(void)
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVERPORT);
 	retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR)err_quit("bind()");
+	if (retval == SOCKET_ERROR) {
+		err_quit("[에러] 위치 : Sock::Init, 이유 : bind() 함수 실패");
+		return false;
+	}
+	return true;
 	
 
 }
 
-void Sock::Close(void)
+void Sock::Close(SOCKET* psock, bool bIsForce)
 {
-
-	closesocket(listen_sock);
+	struct linger stLinger = { 0, 0 };
+	// 강제 종료
+	if (true == bIsForce)
+		stLinger.l_onoff = 1;
+	// 송수신 중단
+	shutdown(*psock, SD_BOTH);
+	// 옵션 설정
+	setsockopt(*psock, SOL_SOCKET, SO_LINGER, (char*)&stLinger, sizeof(stLinger));
+	// 연결 종료
+	closesocket(*psock);
+	*psock = INVALID_SOCKET;
 }
-
-void Sock::Listen(void)
+SOCKET* Sock::GetListenSock(void)
+{
+	SOCKET* sock = &listen_sock;
+	return sock;
+}
+bool Sock::Listen(void)
 {
 
 	int retval = listen(listen_sock, SOMAXCONN);
-	if (retval == SOCKET_ERROR)err_quit("listen()");
-
+	if (retval == SOCKET_ERROR) {
+		err_quit("[에러] 위치 : Sock::Listen, 이유 : listen() 함수 실패");
+		return false;
+	}
+	return true;
 }
-void Sock::Accept(void)
+bool Sock::Start(void)
 {
+	cout << "서버 시작" << endl;
+
 	int retval{};
 	SOCKADDR_IN clientaddr;
 	int addrlen = sizeof(clientaddr);
 	SOCKET client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
 	if (client_sock == INVALID_SOCKET){
-		err_display("accept()");
-		return;
+		err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
+		return false;
 	}
-	else {
+	socklist.emplace_back(client_sock);
+	
 		//접속한 클라이언트 정보 출력
 		//int retval = setsockopt(client_sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&bEnable, sizeof(bEnable));
-		if (retval == SOCKET_ERROR)err_quit("setsockopt()");
-		printf("클라 접속: ip=%s,포트-%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-	}
+		//if (retval == SOCKET_ERROR)err_quit("setsockopt()");
+		printf("클라 접속: ip=%s,포트=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+		return true;
 
 }
 

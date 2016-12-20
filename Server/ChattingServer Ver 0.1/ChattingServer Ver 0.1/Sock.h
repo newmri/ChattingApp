@@ -1,20 +1,22 @@
 #pragma once
 #include <iostream>
-#include <winsock2.h>
 #include <vector>
+#include <winsock2.h>
 using namespace std;
 class Sock
 {
 private:
-	vector<SOCKET> socklist;
+	std::vector<SOCKET> socklist;
 	SOCKET listen_sock;
 	enum { SERVERPORT = 9190 };
 public:
 	Sock(void);
-	void Init(void);
-	void Close(void);
-	void Listen(void);
-	void Accept(void);
+	~Sock(void);
+	bool Init(void);
+	void Close(SOCKET*,bool bIsForce=false);
+	SOCKET* GetListenSock(void);
+	bool Listen(void);
+	bool Start(void);
 	template<typename data, typename size>
 	int Send(SOCKET, data, size) const;
 	template<typename data, typename size>
