@@ -1,2 +1,5 @@
-﻿  Client.cpp
-s:\studies\programs\chattingclient ver 0.1\chattingclient ver 0.1\client.cpp(61): fatal error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "stdafx.h"' to your source?
+﻿  DEnroll.cpp
+  Client.cpp
+s:\kpu\3-winter\chattingapp_project\client\chatting_client\chattingclient ver 0.1\client.cpp(125): fatal error C1010: unexpected end of file while looking for precompiled header. Did you forget to add '#include "stdafx.h"' to your source?
+  ChattingClient Ver 0.1Dlg.cpp
+  Generating Code...

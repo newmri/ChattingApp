@@ -10,7 +10,7 @@ int main()
 	sock.Listen();
 	while (true) {
 		sock.Start();
-
+		sock.RecvType();
 	}
 	sock.Close(sock.GetListenSock());
 

@@ -7,8 +7,11 @@ class Sock
 {
 private:
 	std::vector<SOCKET> socklist;
+	std::vector<SOCKET>::iterator itor = socklist.begin();
 	SOCKET listen_sock;
 	enum { SERVERPORT = 9190 };
+	enum { ENROLL = 1 };
+	int datatype{};
 public:
 	Sock(void);
 	~Sock(void);
@@ -17,10 +20,10 @@ public:
 	SOCKET* GetListenSock(void);
 	bool Listen(void);
 	bool Start(void);
-	template<typename data, typename size>
-	int Send(SOCKET, data, size) const;
-	template<typename data, typename size>
-	int Recvn(SOCKET, data, size, int) const;
+	bool Send(char*, int);
+	bool RecvType(void);
+	bool Recv(char*, int, int);
+	int Recvn(char*, int, int);
 	void err_quit(char*) const;
 	void err_display(char*) const;
 

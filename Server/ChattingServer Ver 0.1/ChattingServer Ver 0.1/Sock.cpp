@@ -13,14 +13,14 @@ bool Sock::Init(void)
 	int retval;
 	// winsock initial
 	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0){
+	if (0!= WSAStartup(MAKEWORD(2, 2), &wsa)){
 		err_quit("[에러] 위치 : Sock::Init, 이유 : WSAStartup() 함수 실패");
 		return false;
 	}
 
 	// socket()
 	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_sock == INVALID_SOCKET){
+	if (INVALID_SOCKET == listen_sock){
 		err_quit("[에러] 위치 : Sock::Init, 이유 : socket() 함수 실패");
 		return false;
 	}
@@ -32,7 +32,7 @@ bool Sock::Init(void)
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVERPORT);
 	retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) {
+	if (SOCKET_ERROR == retval) {
 		err_quit("[에러] 위치 : Sock::Init, 이유 : bind() 함수 실패");
 		return false;
 	}
@@ -64,7 +64,7 @@ bool Sock::Listen(void)
 {
 
 	int retval = listen(listen_sock, SOMAXCONN);
-	if (retval == SOCKET_ERROR) {
+	if (SOCKET_ERROR == retval) {
 		err_quit("[에러] 위치 : Sock::Listen, 이유 : listen() 함수 실패");
 		return false;
 	}
@@ -78,7 +78,7 @@ bool Sock::Start(void)
 	SOCKADDR_IN clientaddr;
 	int addrlen = sizeof(clientaddr);
 	SOCKET client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-	if (client_sock == INVALID_SOCKET){
+	if (INVALID_SOCKET == client_sock){
 		err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
 		return false;
 	}
@@ -91,6 +91,104 @@ bool Sock::Start(void)
 		return true;
 
 }
+bool Sock::Send(char* data, int len)
+{
+	int retval{};
+	// sending data(fixed)
+	retval = send(*itor, (char*)&len, sizeof(len), 0);
+	if (SOCKET_ERROR == retval) {
+		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
+		return false;
+	}
+	// sending data(flexible)
+	retval = send(*itor, data, len, 0);
+	if (SOCKET_ERROR == retval) {
+		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
+		return false;
+	}
+
+	else if (0 == retval) {
+		err_display("[에러] 위치 : Sock::Send, 이유 : 연결 종료");
+		return false;
+	}
+
+	return true;
+}
+bool Sock::RecvType(void)
+{
+	int retval{};
+	// receive datatype
+	retval = Recvn((char*)&datatype, sizeof(int),0);
+
+	if (SOCKET_ERROR == retval)
+	{
+		err_display("[에러] 위치 : Sock::RecvType, 이유 : Recvn() 함수 실패");
+		return false;
+	}
+	else if (0 == retval) {
+		err_display("[에러] 위치 : Sock::RecvType, 이유 : 연결 종료");
+		return false;
+	}
+
+	if (ENROLL == datatype) {
+		cout << datatype << endl;
+	}
+
+}
+bool Sock::Recv(char* data, int len, int flags)
+{
+	int retval{};
+	// receive data(fixed)
+	retval = Recvn((char*)&len, sizeof(int), flags);
+
+	if (SOCKET_ERROR == retval)
+	{
+		err_display("[에러] 위치 : Sock::Recv, 이유 : Recvn() 함수 실패");
+		return false;
+	}
+	else if (0 == retval) {
+		err_display("[에러] 위치 : Sock::Recv, 이유 : 연결 종료");
+		return false;
+	}
+
+	// received data(flexible)
+	retval = Recvn(data, len, flags);
+	if (SOCKET_ERROR == retval)
+	{
+		err_display("[에러] 위치 : Sock::Recv, 이유 : Recvn() 함수 실패");
+		return false;
+	}
+
+	else if (0 == retval) {
+		err_display("[에러] 위치 : Sock::Recv, 이유 : 연결 종료");
+		return false;
+	}
+
+	return true;
+
+
+}
+
+int Sock::Recvn(char* buf, int len, int flags)
+{
+	int received;
+	char* ptr = buf;
+	int left = len;
+	while (left > 0)
+	{
+		received = recv(*itor, ptr, left, flags);
+		if (received == SOCKET_ERROR)
+			return SOCKET_ERROR;
+		else if (received == 0)
+			break;
+		left -= received;
+		ptr += received;
+	}
+	return(len - left);
+
+
+}
+
 
 void Sock::err_quit(char* msg) const
 {

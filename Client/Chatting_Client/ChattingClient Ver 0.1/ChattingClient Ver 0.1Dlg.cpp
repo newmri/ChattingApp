@@ -81,11 +81,11 @@ END_MESSAGE_MAP()
 
 
 // CChattingClientVer01Dlg message handlers
-
+Sock sock;
 BOOL CChattingClientVer01Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	ClientSocket sock;
+	
 	sock.Init();
 	sock.Connect();
 	// Add "About..." menu item to system menu.
