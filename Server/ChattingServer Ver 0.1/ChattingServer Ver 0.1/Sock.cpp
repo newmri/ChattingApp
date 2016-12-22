@@ -1,9 +1,10 @@
 #include "Sock.h"
 
-Sock::Sock(void) : socklist(),listen_sock(INVALID_SOCKET) {};
+Sock::Sock(void) : socklist(),loginthread(),iters(), userlist(),listen_sock(INVALID_SOCKET) {};
 Sock::~Sock(void)
 {
 	WSACleanup();
+	CloseHandle(loginthread);
 }
 
 bool Sock::Init(void)
@@ -70,38 +71,52 @@ bool Sock::Listen(void)
 	}
 	return true;
 }
-bool Sock::Start(void)
+bool Sock::Start(Sock& sock)
 {
 	cout << "서버 시작" << endl;
 
 	int retval{};
 	SOCKADDR_IN clientaddr;
 	int addrlen = sizeof(clientaddr);
-	SOCKET client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-	if (INVALID_SOCKET == client_sock){
-		err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
-		return false;
-	}
-	socklist.emplace_back(client_sock);
-	
+	while (true) {
+		SOCKET client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+		if (INVALID_SOCKET == client_sock) {
+			err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
+			return false;
+		}
+		socklist.emplace_back(client_sock);
+
 		//접속한 클라이언트 정보 출력
 		//int retval = setsockopt(client_sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&bEnable, sizeof(bEnable));
 		//if (retval == SOCKET_ERROR)err_quit("setsockopt()");
 		printf("클라 접속: ip=%s,포트=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+		loginthread = (HANDLE)_beginthreadex(NULL, 0, LoginFunc,&sock, NULL, 0);
+		WaitForSingleObject(loginthread, INFINITE);
+	}
 		return true;
+
+}
+
+unsigned int __stdcall Sock::LoginFunc(LPVOID lpVoid)
+{
+	
+	Sock* sock = static_cast<Sock*>(lpVoid);
+	sock->RecvType(sock);
+
+	return false;
 
 }
 bool Sock::Send(char* data, int len)
 {
 	int retval{};
 	// sending data(fixed)
-	retval = send(*itor, (char*)&len, sizeof(len), 0);
+	retval = send(*iters, (char*)&len, sizeof(len), 0);
 	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
 	}
 	// sending data(flexible)
-	retval = send(*itor, data, len, 0);
+	retval = send(*iters, data, len, 0);
 	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
@@ -114,11 +129,11 @@ bool Sock::Send(char* data, int len)
 
 	return true;
 }
-bool Sock::RecvType(void)
+bool Sock::RecvType(Sock* sock)
 {
 	int retval{};
 	// receive datatype
-	retval = Recvn((char*)&datatype, sizeof(int),0);
+	retval = Recvn((char*)&datatype, sizeof(datatype),0);
 
 	if (SOCKET_ERROR == retval)
 	{
@@ -131,16 +146,24 @@ bool Sock::RecvType(void)
 	}
 
 	if (ENROLL == datatype) {
-		cout << datatype << endl;
+		User user;
+		sock->Recv((char*)&user, sizeof(user), 0);
+		return true;
 	}
+	return true;
+}
+
+std::vector<User>* Sock::GetUserlist()
+{
+	return &userlist;
 
 }
 bool Sock::Recv(char* data, int len, int flags)
 {
+
 	int retval{};
 	// receive data(fixed)
-	retval = Recvn((char*)&len, sizeof(int), flags);
-
+	retval = Recvn((char*)&len, sizeof(len), flags);
 	if (SOCKET_ERROR == retval)
 	{
 		err_display("[에러] 위치 : Sock::Recv, 이유 : Recvn() 함수 실패");
@@ -150,7 +173,6 @@ bool Sock::Recv(char* data, int len, int flags)
 		err_display("[에러] 위치 : Sock::Recv, 이유 : 연결 종료");
 		return false;
 	}
-
 	// received data(flexible)
 	retval = Recvn(data, len, flags);
 	if (SOCKET_ERROR == retval)
@@ -174,9 +196,10 @@ int Sock::Recvn(char* buf, int len, int flags)
 	int received;
 	char* ptr = buf;
 	int left = len;
+	iters = socklist.begin();
 	while (left > 0)
 	{
-		received = recv(*itor, ptr, left, flags);
+		received = recv(*iters, ptr, left, flags);
 		if (received == SOCKET_ERROR)
 			return SOCKET_ERROR;
 		else if (received == 0)

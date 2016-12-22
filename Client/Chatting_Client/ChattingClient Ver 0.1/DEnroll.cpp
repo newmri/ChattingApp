@@ -45,6 +45,7 @@ void CDEnroll::OnBnClickedEok()
 	GetDlgItemText(IDC_ENIC, newuser.nickname);
 	extern Sock sock;
 	sock.SendType(ENROLL);
+	sock.Send((char*)&newuser, sizeof(newuser));
 	//sock.Send((char*)&newuser, sizeof(newuser));
 	//char Query[600];
 	//int Query_Status;

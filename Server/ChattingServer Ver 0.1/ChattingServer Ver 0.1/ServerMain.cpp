@@ -8,10 +8,10 @@ int main()
 	Sock sock;
 	sock.Init();
 	sock.Listen();
-	while (true) {
-		sock.Start();
-		sock.RecvType();
-	}
+	
+		sock.Start(sock);
+		//sock.RecvType();
+	
 	sock.Close(sock.GetListenSock());
 
 
