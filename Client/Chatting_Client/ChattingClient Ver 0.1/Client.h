@@ -1,6 +1,13 @@
 #pragma once
+#include <afx.h>
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32")
+class User {
+public:
+	CString id;
+	CString nickname;
+	CString pwd;
+};
 class Sock {
 private:
 	SOCKET sock;

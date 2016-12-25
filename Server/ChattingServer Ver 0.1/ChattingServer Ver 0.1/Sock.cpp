@@ -84,6 +84,7 @@ bool Sock::Start(Sock& sock)
 			err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
 			return false;
 		}
+		
 		socklist.emplace_back(client_sock);
 
 		//접속한 클라이언트 정보 출력
@@ -146,8 +147,7 @@ bool Sock::RecvType(Sock* sock)
 	}
 
 	if (ENROLL == datatype) {
-		User user;
-		sock->Recv((char*)&user, sizeof(user), 0);
+		sock->Recv(buf,0);
 		return true;
 	}
 	return true;
@@ -158,12 +158,13 @@ std::vector<User>* Sock::GetUserlist()
 	return &userlist;
 
 }
-bool Sock::Recv(char* data, int len, int flags)
-{
 
+bool Sock::Recv(char* data,int flags)
+{
 	int retval{};
+	int len{};
 	// receive data(fixed)
-	retval = Recvn((char*)&len, sizeof(len), flags);
+	retval = Recvn((char*)&len,sizeof(int), flags);
 	if (SOCKET_ERROR == retval)
 	{
 		err_display("[에러] 위치 : Sock::Recv, 이유 : Recvn() 함수 실패");
@@ -186,11 +187,11 @@ bool Sock::Recv(char* data, int len, int flags)
 		return false;
 	}
 
+
 	return true;
 
 
 }
-
 int Sock::Recvn(char* buf, int len, int flags)
 {
 	int received;

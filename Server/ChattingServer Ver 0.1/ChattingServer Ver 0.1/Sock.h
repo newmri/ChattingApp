@@ -12,7 +12,6 @@ public:
 	CString id;
 	CString nickname;
 	CString pwd;
-
 };
 class Sock
 {
@@ -21,6 +20,7 @@ private:
 	std::vector<SOCKET>::iterator iters;
 	std::vector<User> userlist;
 	SOCKET listen_sock;
+	char buf[128]{};
 	HANDLE loginthread;
 	enum { SERVERPORT = 9190 };
 	enum { ENROLL = 1 };
@@ -36,7 +36,7 @@ public:
 	bool Send(char*, int);
 	bool RecvType(Sock*);
 	std::vector<User>* GetUserlist();
-	bool Recv(char*, int, int);
+	bool Recv(char*,int);
 	int Recvn(char*, int, int);
 	void err_quit(char*) const;
 	void err_display(char*) const;

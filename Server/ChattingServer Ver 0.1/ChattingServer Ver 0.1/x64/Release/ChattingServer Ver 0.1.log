@@ -1,0 +1,12 @@
+﻿  Mysql.cpp
+  ServerMain.cpp
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(38): warning C4996: 'MBCS_Support_Deprecated_In_MFC': MBCS support in MFC is deprecated and may be removed in a future version of MFC.
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(33): note: see declaration of 'MBCS_Support_Deprecated_In_MFC'
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  Generating code
+  12 of 174 functions ( 6.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\x64\Release\ChattingServer Ver 0.1.exe
+  ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\x64\Release\ChattingServer Ver 0.1.pdb (Full PDB)

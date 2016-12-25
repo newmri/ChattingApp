@@ -1,5 +1,5 @@
 #include "Client.h"
-
+#include<iostream>
 Sock::Sock(void) : sock(), serveraddr() {}
 Sock::~Sock()
 {
@@ -69,18 +69,19 @@ bool Sock::SendType(int datatype)
 
 
 }
-bool Sock::Send(char* data,int len) 
+
+bool Sock::Send(char* data, int len)
 {
 	int retval{};
 	// sending data(fixed)
-	retval = send(sock, (char*)&len, sizeof(len), 0);
-	if (SOCKET_ERROR==retval){
+	retval = send(sock, (char*)&len,sizeof(int), 0);
+	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
 	}
-	// sending data(flexible)
-	retval = send(sock,data,len, 0);
-	if (SOCKET_ERROR==retval){
+	 // sending data(flexible)
+	retval = send(sock,data, len, 0);
+	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
 	}
@@ -92,7 +93,6 @@ bool Sock::Send(char* data,int len)
 
 	return true;
 }
-
 bool Sock::Recv(char* data, int len, int flags)
 {
 	int retval{};

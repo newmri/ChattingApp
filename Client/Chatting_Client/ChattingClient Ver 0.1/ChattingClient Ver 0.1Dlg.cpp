@@ -9,6 +9,7 @@
 #include "Client.h"
 #include "DEnroll.h"
 #include "userExit.h"
+#pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

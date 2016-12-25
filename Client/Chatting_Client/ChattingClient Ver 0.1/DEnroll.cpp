@@ -6,7 +6,6 @@
 #include "DEnroll.h"
 #include "afxdialogex.h"
 #include "Client.h"
-#include "User.h"
 // CDEnroll dialog
 
 IMPLEMENT_DYNAMIC(CDEnroll, CDialogEx)
@@ -45,8 +44,10 @@ void CDEnroll::OnBnClickedEok()
 	GetDlgItemText(IDC_ENIC, newuser.nickname);
 	extern Sock sock;
 	sock.SendType(ENROLL);
-	sock.Send((char*)&newuser, sizeof(newuser));
-	//sock.Send((char*)&newuser, sizeof(newuser));
+	char buf[128];
+	wsprintf(buf, "%s %s %s", newuser.id.Trim(), newuser.pwd.Trim(), newuser.nickname);
+	sock.Send(buf,128);
+	
 	//char Query[600];
 	//int Query_Status;
 	//CString Sqlstr;

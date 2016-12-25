@@ -21,12 +21,18 @@
     <ClCompile Include="Sock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mysql.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="User.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
