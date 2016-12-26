@@ -12,7 +12,7 @@ class Sock {
 private:
 	SOCKET sock;
 	SOCKADDR_IN serveraddr;
-	char* SERVERIP = "127.0.0.1";
+	const char* const SERVERIP = "127.0.0.1";
 	enum { SERVERPORT = 9190 };
 	enum { ENROLL = 1 };
 public:

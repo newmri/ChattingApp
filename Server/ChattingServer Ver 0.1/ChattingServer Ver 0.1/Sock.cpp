@@ -146,11 +146,13 @@ bool Sock::RecvType(Sock* sock)
 		return false;
 	}
 
-	if (ENROLL == datatype) {
-		sock->Recv(buf,0);
-		return true;
-	}
+	
+	retval = sock->Recv(buf, 0);
+	if(retval)
 	return true;
+	else if (!retval)
+	return false;
+
 }
 
 std::vector<User>* Sock::GetUserlist()
@@ -187,7 +189,10 @@ bool Sock::Recv(char* data,int flags)
 		return false;
 	}
 
+	if (ENROLL == datatype)
+	{
 
+	}
 	return true;
 
 
@@ -229,4 +234,38 @@ void Sock::err_display(char* msg) const
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
 	MessageBox(NULL, (LPCTSTR)lpMsgBuf, (LPCSTR)msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
+}
+
+bool Sock::DivideUser(void)
+{
+	char* result = nullptr;
+	int count = 0;
+	result = strtok(buf, " ");
+	while (NULL != result) {
+		switch (count)
+		{
+		case 0:
+			user.id = result;
+			break;
+		case 1:
+			user.pwd = result;
+			break;
+		case 2:
+			user.nickname = result;
+			break;
+		}
+		count++;
+		result = strtok(NULL, " ");
+	}
+
+}
+bool Sock::MysqlInit(void)
+{
+	bool retval=mysql.Init();
+	if (retval)
+		return true;
+	else
+		return false;
+
+
 }

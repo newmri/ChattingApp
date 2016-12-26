@@ -1,18 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <afx.h>
 #include <vector>
-#include <winsock2.h>
-#include<process.h>
+#include <process.h>
+#include "mysql.h"
 using namespace std;
 
-class User {
-public:
-	CString id;
-	CString nickname;
-	CString pwd;
-};
+
 class Sock
 {
 private:
@@ -20,6 +14,8 @@ private:
 	std::vector<SOCKET>::iterator iters;
 	std::vector<User> userlist;
 	SOCKET listen_sock;
+	Mysql mysql;
+	User user;
 	char buf[128]{};
 	HANDLE loginthread;
 	enum { SERVERPORT = 9190 };
@@ -42,6 +38,9 @@ public:
 	void err_display(char*) const;
 	static unsigned int __stdcall LoginFunc(LPVOID);
 
+	// ---------mysql------------
+	bool MysqlInit(void);
+	bool DivideUser(void);
 
 
 };

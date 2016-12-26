@@ -1,10 +1,7 @@
 #pragma once
-#include <afx.h>
-
-class User {
-public:
-	CString id;
-	CString nickname;
-	CString pwd;
+struct User {
+	char* id = nullptr;
+	char* nickname = nullptr;
+	char* pwd = nullptr;
 
 };
