@@ -100,10 +100,11 @@ bool Sock::Start(Sock& sock)
 
 unsigned int __stdcall Sock::LoginFunc(LPVOID lpVoid)
 {
-	
-	Sock* sock = static_cast<Sock*>(lpVoid);
-	sock->RecvType(sock);
-
+	while (true)
+	{
+		Sock* sock = static_cast<Sock*>(lpVoid);
+		sock->RecvType(sock);
+	}
 	return false;
 
 }
@@ -146,8 +147,17 @@ bool Sock::RecvType(Sock* sock)
 		return false;
 	}
 
-	
 	retval = sock->Recv(buf, 0);
+	if (ENROLL == datatype){
+		sock->DivideUser();
+		sock->mysql.SetUser(user);
+		sock->mysql.Enroll();
+	}
+	else if (SECESSION == datatype) {
+		sock->DivideUserS();
+		sock->mysql.SetUserS(users);
+		sock->mysql.Secession();
+	}
 	if(retval)
 	return true;
 	else if (!retval)
@@ -189,10 +199,6 @@ bool Sock::Recv(char* data,int flags)
 		return false;
 	}
 
-	if (ENROLL == datatype)
-	{
-
-	}
 	return true;
 
 
@@ -239,7 +245,7 @@ void Sock::err_display(char* msg) const
 bool Sock::DivideUser(void)
 {
 	char* result = nullptr;
-	int count = 0;
+	int count{};
 	result = strtok(buf, " ");
 	while (NULL != result) {
 		switch (count)
@@ -257,6 +263,29 @@ bool Sock::DivideUser(void)
 		count++;
 		result = strtok(NULL, " ");
 	}
+	return true;
+
+}
+
+bool Sock::DivideUserS(void)
+{
+	char* result = nullptr;
+	int count{};
+	result = strtok(buf, " ");
+	while (NULL != result) {
+		switch (count)
+		{
+		case 0:
+			users.id = result;
+			break;
+		case 1:
+			users.pwd = result;
+			break;
+		}
+		count++;
+		result = strtok(NULL, " ");
+	}
+	return true;
 
 }
 bool Sock::MysqlInit(void)

@@ -1,9 +1,9 @@
 #pragma once
-
 #include <iostream>
 #include <vector>
 #include <process.h>
 #include "mysql.h"
+#pragma comment(lib, "user32.lib") 
 using namespace std;
 
 
@@ -16,10 +16,11 @@ private:
 	SOCKET listen_sock;
 	Mysql mysql;
 	User user;
+	UserS users;
 	char buf[128]{};
 	HANDLE loginthread;
 	enum { SERVERPORT = 9190 };
-	enum { ENROLL = 1 };
+	enum { ENROLL = 1, SECESSION };
 	int datatype{};
 public:
 	Sock(void);
@@ -38,9 +39,10 @@ public:
 	void err_display(char*) const;
 	static unsigned int __stdcall LoginFunc(LPVOID);
 
-	// ---------mysql------------
+	// ---------mysql------------ //
 	bool MysqlInit(void);
 	bool DivideUser(void);
+	bool DivideUserS(void);
 
 
 };

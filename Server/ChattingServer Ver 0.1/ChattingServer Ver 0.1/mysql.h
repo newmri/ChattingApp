@@ -12,12 +12,16 @@
 class Mysql
 {
 	User user;
+	UserS users;
 	MYSQL_ROW row;		// mysql 의 행을 맡는다.
 	MYSQL_RES *m_res;	// mysql의 결과를 받아온다
 	MYSQL mysql;		// mysql의 전체적인 연동을 담당한다.
 public:
 	bool Init(void);
 	bool Enroll(void);
+	bool Secession(void);
+	void SetUser(User&);
+	void SetUserS(UserS&);
 
 
 };

@@ -5,3 +5,7 @@ struct User {
 	char* pwd = nullptr;
 
 };
+struct UserS {
+	char* id = nullptr;
+	char* pwd = nullptr;
+};

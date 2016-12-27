@@ -1,9 +1,13 @@
 #pragma once
 #include <afx.h>
-class User {
-public:
+struct User {
 	CString id;
 	CString nickname;
 	CString pwd;
 
+};
+struct UserS {
+public:
+	CString id;
+	CString pwd;
 };

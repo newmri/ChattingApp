@@ -2,10 +2,13 @@
 #include <afx.h>
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32")
-class User {
-public:
+struct User {
 	CString id;
 	CString nickname;
+	CString pwd;
+};
+struct UserS {
+	CString id;
 	CString pwd;
 };
 class Sock {
