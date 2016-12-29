@@ -27,7 +27,7 @@ public:
 	void Close(SOCKET*, bool);
 	bool SendType(int);
 	bool Send(char*,int);
-	bool Recv(char*, int, int);
+	bool Recv(char*,int);
 	int Recvn(char*, int, int);
 	void err_quit(char*) const;
 	void err_display(char*) const;

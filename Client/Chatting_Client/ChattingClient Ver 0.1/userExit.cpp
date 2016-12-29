@@ -47,6 +47,13 @@ void userExit::OnBnClickedOk()
 	char buf[128];
 	wsprintf(buf, "%s %s", user.id.Trim(), user.pwd);
 	sock.Send(buf, 128);
+	bool result{};
+	sock.Recv((char*)&result, 0);
+	if (true == result)
+		MessageBox(_T("다음에 또 만나요!"), _T("탈퇴 성공"), MB_OK);
+	else
+		MessageBox(_T("탈퇴를 완료하는 도중에 오류가 발생하였습니다."), _T("탈퇴 실패"));
+
 
 	
 

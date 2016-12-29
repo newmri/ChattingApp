@@ -47,7 +47,12 @@ void CDEnroll::OnBnClickedEok()
 	char buf[128];
 	wsprintf(buf, "%s %s %s", newuser.id.Trim(), newuser.pwd.Trim(), newuser.nickname);
 	sock.Send(buf,128);
-	
+	bool result{};
+	sock.Recv((char*)&result, 0);
+	if(true==result)
+		MessageBox( _T("회원가입을 환영합니다 호갱님."),_T("가입 성공"), MB_OK);
+	else
+		MessageBox(_T("회원가입을 완료하는 도중에 오류가 발생하였습니다."), _T("가입 실패"));
 	
 
 		

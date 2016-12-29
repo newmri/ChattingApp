@@ -151,12 +151,14 @@ bool Sock::RecvType(Sock* sock)
 	if (ENROLL == datatype){
 		sock->DivideUser();
 		sock->mysql.SetUser(user);
-		sock->mysql.Enroll();
+		bool ret=sock->mysql.Enroll();
+		sock->Send((char*)&ret, sizeof(ret));
 	}
 	else if (SECESSION == datatype) {
 		sock->DivideUserS();
 		sock->mysql.SetUserS(users);
-		sock->mysql.Secession();
+		bool ret=sock->mysql.Secession();
+		sock->Send((char*)&ret, sizeof(ret));
 	}
 	if(retval)
 	return true;

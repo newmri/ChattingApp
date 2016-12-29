@@ -93,9 +93,10 @@ bool Sock::Send(char* data, int len)
 
 	return true;
 }
-bool Sock::Recv(char* data, int len, int flags)
+bool Sock::Recv(char* data,int flags)
 {
 	int retval{};
+	int len{};
 	// receive data(fixed)
 	retval = Recvn((char*)&len, sizeof(int),flags);
 
