@@ -47,6 +47,22 @@ bool Mysql::Secession(void)
 	return true;
 
 }
+
+bool Mysql::Login(void)
+{
+	char Query[256]{};
+	int Query_Status{};
+
+	sprintf_s(Query, "select* from chattingdb.userinfo where ID = '%s' and PWD = 's' ", users.id, users.pwd);
+	Query_Status = mysql_query(&mysql, Query);
+	if (Query_Status) {
+		cout << "ID: " << users.id << " 로그인 실패" << endl;
+		return false;
+	}
+	cout << "ID: " << users.id << " 로그인 성공" << endl;
+	return true;
+
+}
 void Mysql::SetUser(User& other)
 {
 	memcpy(&user, &other, sizeof(User));

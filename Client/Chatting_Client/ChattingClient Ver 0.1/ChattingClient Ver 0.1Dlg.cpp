@@ -9,6 +9,7 @@
 #include "Client.h"
 #include "DEnroll.h"
 #include "userExit.h"
+#include "Main.h"
 #pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -111,8 +112,8 @@ BOOL CChattingClientVer01Dlg::OnInitDialog()
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
+	//SetIcon(m_hIcon, TRUE);			// Set big icon
+	//SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
 	//m_bLogin.LoadBitmaps(IDB_LOGIN);
@@ -181,10 +182,7 @@ HCURSOR CChattingClientVer01Dlg::OnQueryDragIcon()
 
 
 
-void CChattingClientVer01Dlg::OnBnClickedLogin()
-{
-	// TODO: Add your control notification handler code here
-}
+
 
 
 void CChattingClientVer01Dlg::OnBnClickedExit()
@@ -203,27 +201,30 @@ void CChattingClientVer01Dlg::OnEnChangeId()
 	// TODO:  Add your control notification handler code here
 }
 
-
+enum { LOGIN = 3 };
 void CChattingClientVer01Dlg::OnBnClickedLgoin()
 {
-	// TODO: Add your control notification handler code here
 
-	// sql 접속
-
-	mysql_init(&mysql);
-	if (!mysql_real_connect(&mysql, DB_ADDRESS, DB_ID, DB_PASS, DB_NAME, 3306, 0, 0))
-
-	{
-
-		MessageBox(NULL, _T("DB 접속에 실패했습니다.\n응용 프로그램을 시작할 수 없습니다."), MB_OK);
-
-	}
-
-
-
-	
 		
-	
+	UserS user;
+	// TODO: Add your control notification handler code here
+	GetDlgItemText(IDC_ID, user.id);
+	GetDlgItemText(IDC_PWD, user.pwd);
+	extern Sock sock;
+	sock.SendType(LOGIN);
+	char buf[128];
+	wsprintf(buf, "%s %s", user.id.Trim(), user.pwd);
+	sock.Send(buf, 128);
+	bool result{};
+	sock.Recv((char*)&result, 0);
+	if (true == result){
+		MessageBox(_T("환영합니다"), _T("로그인 성공"), MB_OK);
+		::SendMessage(this->m_hWnd, WM_CLOSE, NULL, NULL);
+		CMain Main;
+		Main.DoModal();
+	}
+	else
+		MessageBox(_T("로그인을 완료하는 도중에 오류가 발생하였습니다."), _T("로그인 실패"));
 
 	
 

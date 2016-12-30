@@ -20,7 +20,7 @@ private:
 	char buf[128]{};
 	HANDLE loginthread;
 	enum { SERVERPORT = 9190 };
-	enum { ENROLL = 1, SECESSION };
+	enum { ENROLL = 1, SECESSION, LOGIN };
 	int datatype{};
 public:
 	Sock(void);

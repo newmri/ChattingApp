@@ -20,6 +20,7 @@ public:
 	bool Init(void);
 	bool Enroll(void);
 	bool Secession(void);
+	bool Login(void);
 	void SetUser(User&);
 	void SetUserS(UserS&);
 
