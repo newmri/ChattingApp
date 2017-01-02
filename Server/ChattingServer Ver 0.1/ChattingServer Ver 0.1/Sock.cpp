@@ -84,15 +84,20 @@ bool Sock::Start(Sock& sock)
 			err_display("[에러] 위치 : Sock::Start, 이유 : accept() 함수 실패");
 			return false;
 		}
-		
-		socklist.emplace_back(client_sock);
-
+		usernum++;
+		User user;
+		user.sock = client_sock;
+		user.num = usernum;
+		userlist.emplace_back(user);
+		//iters = userlist.begin();
+		//sock.Send((char*)&usernum, sizeof(char*));
+		//cout << user.num << endl;
 		//접속한 클라이언트 정보 출력
 		//int retval = setsockopt(client_sock, SOL_SOCKET, SO_KEEPALIVE, (char*)&bEnable, sizeof(bEnable));
 		//if (retval == SOCKET_ERROR)err_quit("setsockopt()");
 		printf("클라 접속: ip=%s,포트=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 		loginthread = (HANDLE)_beginthreadex(NULL, 0, LoginFunc,&sock, NULL, 0);
-		WaitForSingleObject(loginthread, INFINITE);
+		//WaitForSingleObject(loginthread, INFINITE);
 	}
 		return true;
 
@@ -112,13 +117,13 @@ bool Sock::Send(char* data, int len)
 {
 	int retval{};
 	// sending data(fixed)
-	retval = send(*iters, (char*)&len, sizeof(len), 0);
+	retval = send(iters->sock, (char*)&len, sizeof(len), 0);
 	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
 	}
 	// sending data(flexible)
-	retval = send(*iters, data, len, 0);
+	retval = send(iters->sock, data, len, 0);
 	if (SOCKET_ERROR == retval) {
 		err_display("[에러] 위치 : Sock::Send, 이유 : send() 함수 실패");
 		return false;
@@ -159,6 +164,9 @@ bool Sock::RecvType(Sock* sock)
 		sock->mysql.SetUserS(users);
 		bool ret=sock->mysql.Login();
 		sock->Send((char*)&ret, sizeof(ret));
+	}
+	else if (CHATTINGDATA == datatype) {
+		sock->Send(buf,128);
 	}
 	if(retval)
 	return true;
@@ -210,10 +218,10 @@ int Sock::Recvn(char* buf, int len, int flags)
 	int received;
 	char* ptr = buf;
 	int left = len;
-	iters = socklist.begin();
+	iters = userlist.begin();
 	while (left > 0)
 	{
-		received = recv(*iters, ptr, left, flags);
+		received = recv(iters->sock, ptr, left, flags);
 		if (received == SOCKET_ERROR)
 			return SOCKET_ERROR;
 		else if (received == 0)

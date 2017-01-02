@@ -54,7 +54,10 @@ bool Sock::Connect(void)
 		
 
 }
-
+int& Sock::getNum(void)
+{
+	return num;
+}
 bool Sock::SendType(int datatype)
 {
 	int retval{};

@@ -1,4 +1,5 @@
 #pragma once
+#include "afxwin.h"
 
 
 // CMain dialog
@@ -23,4 +24,5 @@ protected:
 public:
 	afx_msg void OnMadeby();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	CListBox chattingvar;
 };

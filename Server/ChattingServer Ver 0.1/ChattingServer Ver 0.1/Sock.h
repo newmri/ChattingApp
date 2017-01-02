@@ -11,7 +11,7 @@ class Sock
 {
 private:
 	std::vector<SOCKET> socklist;
-	std::vector<SOCKET>::iterator iters;
+	std::vector<User>::iterator iters;
 	std::vector<User> userlist;
 	SOCKET listen_sock;
 	Mysql mysql;
@@ -20,8 +20,9 @@ private:
 	char buf[128]{};
 	HANDLE loginthread;
 	enum { SERVERPORT = 9190 };
-	enum { ENROLL = 1, SECESSION, LOGIN };
+	enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
 	int datatype{};
+	int usernum{};
 public:
 	Sock(void);
 	~Sock(void);

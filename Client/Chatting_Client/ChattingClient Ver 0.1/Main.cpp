@@ -6,7 +6,7 @@
 #include "Main.h"
 #include "afxdialogex.h"
 #include "resource.h"
-
+#include "Client.h"
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -56,6 +56,7 @@ CMain::~CMain()
 void CMain::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_ChattingScreen, chattingvar);
 }
 
 
@@ -73,7 +74,7 @@ void CMain::OnMadeby()
 	Dlg.DoModal();
 }
 
-
+enum { CHATTINGDATA = 4 };
 BOOL CMain::PreTranslateMessage(MSG* pMsg)
 {
 
@@ -94,7 +95,17 @@ BOOL CMain::PreTranslateMessage(MSG* pMsg)
 	// Enter키를 쳤을때 무시
 	else if ((pMsg->message == WM_KEYDOWN) && (pMsg->wParam == VK_RETURN)){
 		if (GetDlgItem(IDC_ChattingInput) == GetFocus()){
-			MessageBox(_T("테스트용 박스"), _T("테스트 성공"), MB_OK);
+			CString str;
+			GetDlgItemText(IDC_ChattingInput, str);
+			extern Sock sock;
+			sock.SendType(CHATTINGDATA);
+			char buf[128];
+			wsprintf(buf, "%s",str.Trim());
+			sock.Send(buf, 128);
+			sock.Recv(buf, 0);
+			str = buf;
+			chattingvar.InsertString(-1, str);
+			SetDlgItemText(IDC_ChattingInput, _T(""));
 			return TRUE;
 		}
 	}

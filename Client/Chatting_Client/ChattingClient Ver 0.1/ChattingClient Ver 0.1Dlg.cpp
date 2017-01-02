@@ -59,6 +59,8 @@ BOOL CChattingClientVer01Dlg::OnInitDialog()
 	
 	sock.Init();
 	sock.Connect();
+	// int num{};
+	// sock.Recv((char*)&num,sizeof(char*));	
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.

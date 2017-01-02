@@ -15,6 +15,7 @@ class Sock {
 private:
 	SOCKET sock;
 	SOCKADDR_IN serveraddr;
+	int num{};
 	const char* const SERVERIP = "127.0.0.1";
 	enum { SERVERPORT = 9190 };
 	enum { ENROLL = 1 };
@@ -24,6 +25,7 @@ public:
 
 	bool Init(void);
 	bool Connect(void);
+	int& getNum(void);
 	void Close(SOCKET*, bool);
 	bool SendType(int);
 	bool Send(char*,int);
