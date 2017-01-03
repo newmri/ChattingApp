@@ -1,18 +1,19 @@
 ﻿  Sock.cpp
 Sock.cpp(98): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   C:\Program Files (x86)\Windows Kits\8.1\Include\um\WinSock2.h(1868): note: see declaration of 'inet_ntoa'
-Sock.cpp(259): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Sock.cpp(260): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
-Sock.cpp(274): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Sock.cpp(275): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
-Sock.cpp(284): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Sock.cpp(285): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
-Sock.cpp(296): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Sock.cpp(297): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(453): note: see declaration of 'strtok'
   Generating code
+s:\kpu\3-winter\chattingapp_project\server\chattingserver ver 0.1\chattingserver ver 0.1\sock.cpp(177): warning C4715: 'Sock::RecvType': not all control paths return a value
   2 of 142 functions ( 1.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    4 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\x64\Release\ChattingServer Ver 0.1.exe
   ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\x64\Release\ChattingServer Ver 0.1.pdb (Full PDB)

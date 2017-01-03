@@ -166,6 +166,7 @@ bool Sock::RecvType(Sock* sock)
 		sock->Send((char*)&ret, sizeof(ret));
 	}
 	else if (CHATTINGDATA == datatype) {
+		cout << sock->buf << endl;
 		sock->Send(buf,128);
 	}
 	if(retval)
