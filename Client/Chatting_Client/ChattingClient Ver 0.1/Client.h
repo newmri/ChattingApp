@@ -17,7 +17,7 @@ private:
 	SOCKADDR_IN serveraddr;
 	int num{};
 	const char* const SERVERIP = "127.0.0.1";
-	enum { SERVERPORT = 9190 };
+	enum { SERVERPORT = 8000 };
 	enum { ENROLL = 1 };
 public:
 	Sock(void);
