@@ -19,7 +19,7 @@ private:
 	UserS users;
 	char buf[128]{};
 	HANDLE loginthread;
-	enum { SERVERPORT = 9190 };
+	enum { SERVERPORT = 8000 };
 	enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
 	int datatype{};
 	int usernum{};
