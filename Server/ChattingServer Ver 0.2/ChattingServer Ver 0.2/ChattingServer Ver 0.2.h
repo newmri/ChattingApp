@@ -3,9 +3,11 @@
 //
 
 #pragma once
-
+#pragma comment(lib, "user32.lib")
 class CChattingServerVer02Dlg;
+//#include "stdafx.h"
 #define MAX_BUFSIZE 1024
+#define MAX_MSGSIZE 30
 #define MAX_STRINGLEN 10
 #define MAX_CLIENT 100
 #define MAX_WORKERTHREAD 4 // 쓰레드 폴에 넣을 쓰레드 수
@@ -15,7 +17,7 @@ class CChattingServerVer02Dlg;
 
 #include "resource.h"		// main symbols
 #include "Mysql.h"
-#pragma comment(lib, "user32.lib")
+
 // CChattingServerVer02App:
 // See ChattingServer Ver 0.2.cpp for the implementation of this class
 //
@@ -23,6 +25,8 @@ class CChattingServerVer02Dlg;
 
 
 enum enumOperation {OP_RECV, OP_SEND };
+// 데이터 구분
+enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
 // WSAOVERLAPPED 구조체 확장
 struct stOverlappedEx {
 	WSAOVERLAPPED m_wsaOverlapped; // Overlapped I/O 구조체
@@ -70,8 +74,8 @@ private:
 	bool m_bAccepterRun;
 	// 소켓 버퍼
 	char m_szSocketBuf[MAX_BUFSIZE];
-	// 데이터 구분
-	enum { ENROLL = 1 };
+	// 메세지 버퍼
+	char m_msgbuf[MAX_MSGSIZE];
 	// 회원 가입 정보 구조체
 	User user;
 	// 기타 구조체

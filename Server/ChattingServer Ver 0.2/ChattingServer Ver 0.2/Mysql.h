@@ -1,11 +1,12 @@
 #pragma once
+#pragma comment(lib, "libmysql.lib")
 #include "stdafx.h"
 #include <WinSock2.h>
 #include <mysql.h>
 #include "UserInfo.h"
+#include <afxsock.h>
 
 
-#pragma comment(lib, "libmysql.lib")
 
 
 #define DB_ADDRESS "localhost"

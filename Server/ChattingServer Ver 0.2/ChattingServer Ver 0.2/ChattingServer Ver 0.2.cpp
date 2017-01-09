@@ -393,19 +393,29 @@ void iocp::WokerThread()
 		}
 
 		if (NULL == lpOverlapped)continue;
-
 		stOverlappedEx* pOverlappedEx = (stOverlappedEx*)lpOverlapped;
 		// Overlapped I/O Recv 작업 결과 뒤 처리
 		if (OP_RECV == pOverlappedEx->m_eOperation) {
-			//pOverlappedEx->m_szBuf[dwIoSize] = NULL;
+			pOverlappedEx->m_szBuf[dwIoSize] = NULL;
 			m_pMainDlg->OutputMsg("[수신] bytes: %d IP(%s) SOCKET(%d)", dwIoSize, inet_ntoa(pClientInfo->m_clientAddr.sin_addr),pClientInfo->m_socketClient);
 			m_retval=DivideUserInfo(pOverlappedEx->m_szBuf,pClientInfo);
-			memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
-			SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
+			if (CHATTINGDATA != user.type) {
+				memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
+				SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
+			}
+			else if (CHATTINGDATA == user.type) {
+				memcpy(m_msgbuf, &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE);
+				SendMsg(pClientInfo,m_msgbuf, MAX_MSGSIZE);
+			}
+			MysqlInit();
 			
 		}
 		else if (OP_SEND == pOverlappedEx->m_eOperation) {
+			if (CHATTINGDATA != user.type) 
 			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %d", dwIoSize, pOverlappedEx->m_szBuf[0]);
+			else if (CHATTINGDATA == user.type)
+			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %s", dwIoSize, m_msgbuf);
+			
 			BindRecv(pClientInfo);
 		}
 		// 예외
@@ -456,12 +466,41 @@ bool iocp::DivideUserInfo(char buf[MAX_BUFSIZE], stClientInfo* pClientInfo)
 			return true;
 		}
 		else {
-			m_pMainDlg->OutputUserLogMsg("ID: %s 가입 실패 IP(%s), socket(%d)", user.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
+			m_pMainDlg->OutputUserLogMsg("ID: %s 가입 실패 IP(%s) SOCKET(%d)", user.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
 			return false;
 		}
 	}
-
-
-
+	else if(SECESSION==user.type){
+		memcpy(&users.id, &buf[sizeof(int)], MAX_STRINGLEN);
+		memcpy(&users.pwd, &buf[sizeof(int) + MAX_STRINGLEN], MAX_STRINGLEN);
+		mysql.SetUserS(users);
+		m_retval = mysql.Secession();
+		if (m_retval) {
+			m_pMainDlg->OutputUserLogMsg("ID: %s 탈퇴 성공 IP(%s) SOCKET(%d)", users.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
+			return true;
+		}
+		else {
+			m_pMainDlg->OutputUserLogMsg("ID: %s 탈퇴 실패 IP(%s), SOCKET(%d)", users.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
+			return false;
+		}
+	}
+	else if (LOGIN == user.type) {
+		memcpy(&users.id, &buf[sizeof(int)], MAX_STRINGLEN);
+		memcpy(&users.pwd, &buf[sizeof(int) + MAX_STRINGLEN], MAX_STRINGLEN);
+		mysql.SetUserS(users);
+		m_retval = mysql.Login();
+		if (m_retval) {
+			m_pMainDlg->OutputUserLogMsg("ID: %s 로그인 성공 IP(%s) SOCKET(%d)", users.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
+			return true;
+		}
+		else {
+			m_pMainDlg->OutputUserLogMsg("ID: %s 로그인 실패 IP(%s), SOCKET(%d)", users.id, inet_ntoa(pClientInfo->m_clientAddr.sin_addr), pClientInfo->m_socketClient);
+			return false;
+		}
+	}
+	else if (CHATTINGDATA == user.type) {
+		return true;
+	}
+	else return false;
 
 }

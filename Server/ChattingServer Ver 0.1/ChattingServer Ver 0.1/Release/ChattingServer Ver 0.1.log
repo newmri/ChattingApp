@@ -1,17 +1,6 @@
-﻿  ServerMain.cpp
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(38): warning C4996: 'MBCS_Support_Deprecated_In_MFC': MBCS support in MFC is deprecated and may be removed in a future version of MFC.
-  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(33): note: see declaration of 'MBCS_Support_Deprecated_In_MFC'
-  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+﻿  Mysql.cpp
+s:\kpu\3-winter\chattingapp_project\server\chattingserver ver 0.1\chattingserver ver 0.1\mysql.h(3): fatal error C1083: Cannot open include file: 'mysql.h': No such file or directory
+  ServerMain.cpp
+s:\kpu\3-winter\chattingapp_project\server\chattingserver ver 0.1\chattingserver ver 0.1\mysql.h(3): fatal error C1083: Cannot open include file: 'mysql.h': No such file or directory
   Sock.cpp
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(38): warning C4996: 'MBCS_Support_Deprecated_In_MFC': MBCS support in MFC is deprecated and may be removed in a future version of MFC.
-  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(33): note: see declaration of 'MBCS_Support_Deprecated_In_MFC'
-  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-Sock.cpp(92): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
-  C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsock2.h(1868): note: see declaration of 'inet_ntoa'
-  Generating code
-  7 of 175 functions ( 4.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\Release\ChattingServer Ver 0.1.exe
-  ChattingServer Ver 0.1.vcxproj -> S:\KPU\3-Winter\ChattingApp_Project\Server\ChattingServer Ver 0.1\Release\ChattingServer Ver 0.1.pdb (Full PDB)
+s:\kpu\3-winter\chattingapp_project\server\chattingserver ver 0.1\chattingserver ver 0.1\mysql.h(3): fatal error C1083: Cannot open include file: 'mysql.h': No such file or directory
