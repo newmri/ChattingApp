@@ -18,14 +18,18 @@ bool Sock::Init(void)
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
 	serveraddr.sin_port = htons(SERVERPORT);
-	sock = socket(AF_INET, SOCK_STREAM, 0);
+	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (INVALID_SOCKET == sock) {
 		err_quit("[에러] 위치 : Sock::Init, 이유 : socket() 함수 실패");
 		return false;
 	}
 	return true;
 }
-
+bool Sock::setHandle(HANDLE hWnd)
+{
+	m_hWnd = hWnd;
+	return true;
+}
 void Sock::Close(SOCKET* psock, bool bIsForce)
 {
 	struct linger stLinger = { 0, 0 };
@@ -57,6 +61,10 @@ bool Sock::Connect(void)
 int& Sock::getNum(void)
 {
 	return num;
+}
+SOCKET& Sock::getSocket(void)
+{
+	return sock;
 }
 User& Sock::getUser(void)
 {

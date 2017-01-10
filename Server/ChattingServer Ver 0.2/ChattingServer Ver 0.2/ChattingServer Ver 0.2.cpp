@@ -398,16 +398,36 @@ void iocp::WokerThread()
 		if (OP_RECV == pOverlappedEx->m_eOperation) {
 			pOverlappedEx->m_szBuf[dwIoSize] = NULL;
 			m_pMainDlg->OutputMsg("[수신] bytes: %d IP(%s) SOCKET(%d)", dwIoSize, inet_ntoa(pClientInfo->m_clientAddr.sin_addr),pClientInfo->m_socketClient);
+			
 			m_retval=DivideUserInfo(pOverlappedEx->m_szBuf,pClientInfo);
-			if (CHATTINGDATA != user.type) {
+
+			if (CHATTINGDATA != user.type && LOGIN != user.type) {
 				memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
 				SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
 			}
+			else if (LOGIN == user.type) {
+				memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
+				SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
+				if (true == m_retval) {
+					pClientInfo->m_uLocation = ROOM;
+					//char* nickname = mysql.GetUserNickName();
+					/*for (int i = 0; i < MAX_CLIENT; i++) {
+						if (ROOM == pClientInfo[i].m_uLocation) {
+							SendMsg(&pClientInfo[i], nickname, MAX_MSGSIZE);
+						}
+					}*/
+				}
+			}
 			else if (CHATTINGDATA == user.type) {
 				memcpy(m_msgbuf, &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE);
-				SendMsg(pClientInfo,m_msgbuf, MAX_MSGSIZE);
+				for (int i = 0; i < MAX_CLIENT; i++) {
+					if (INVALID_SOCKET != pClientInfo[i].m_socketClient) {
+						if (ROOM == pClientInfo[i].m_uLocation) {
+							SendMsg(&pClientInfo[i], m_msgbuf, MAX_MSGSIZE);
+						}
+					}
+				}
 			}
-			MysqlInit();
 			
 		}
 		else if (OP_SEND == pOverlappedEx->m_eOperation) {
@@ -422,6 +442,7 @@ void iocp::WokerThread()
 		else {
 			m_pMainDlg->OutputMsg("socket(%d)에서의 예외상황", pClientInfo->m_socketClient);
 		}
+		
 	}
 }
 void iocp::DestroyThread()

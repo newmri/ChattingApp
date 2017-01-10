@@ -18,6 +18,7 @@ bool Mysql::Init(void)
 bool Mysql::Enroll(void)
 {
 	// 유저 가입
+	Init();
 	char Query[600]{};
 	int Query_Status{};
 	sprintf_s(Query, "insert into chattingdb.userinfo values ('%s','%s','%s')", user.id, user.pwd, user.nickname);
@@ -34,6 +35,7 @@ bool Mysql::Enroll(void)
 }
 bool Mysql::Secession(void)
 {
+	Init();
 	char Query[256]{};
 	int Query_Status{};
 
@@ -57,6 +59,7 @@ bool Mysql::Secession(void)
 
 bool Mysql::Login(void)
 {
+	Init();
 	char Query[256]{};
 	int Query_Status{};
 
@@ -80,5 +83,22 @@ void Mysql::SetUserS(UserS& other)
 {
 	memcpy(&users, &other, sizeof(UserS));
 	return;
+
+}
+
+char* Mysql::GetUserNickName(void)
+{
+	Init();
+	char Query[256]{};
+	int Query_Status{};
+	sprintf_s(Query, "select NickName from chattingdb.userinfo where ID = '%s' ", users.id);
+	Query_Status = mysql_query(&mysql, Query);
+
+	m_res = mysql_use_result(&mysql);
+	row = mysql_fetch_row(m_res);
+
+	char* nickname = "a";
+	return nickname;
+
 
 }

@@ -57,13 +57,53 @@ void CMain::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ChattingScreen, chattingvar);
+	DDX_Control(pDX, IDC_UserList, UserList);
 }
 
 
 BEGIN_MESSAGE_MAP(CMain, CDialog)
 	ON_COMMAND(ID_MadeBy, &CMain::OnMadeby)
+	ON_MESSAGE(WM_SOCKETMSG, OnSocketMsg)
+//	ON_WM_ACTIVATE()
+	ON_MESSAGE(27001, &CMain::On27001)
 END_MESSAGE_MAP()
 
+LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
+{
+
+	extern Sock sock;
+	//SOCKET sock = (SOCKET)wParam;
+	// 에러 체크
+	int nError = WSAGETSELECTERROR(lParam);
+	if (0 != nError) {
+		return false;
+	}
+	// 이벤트 체크
+	int nEvent = WSAGETSELECTEVENT(lParam);
+	switch (nEvent) {
+	case FD_READ:
+	{
+
+		sock.Recv(m_szSocketBuf, 30, 0);
+		//int nRecvLen = recv(sock, m_szSocketBuf,30, 0);
+		CString str = m_szSocketBuf;
+		chattingvar.InsertString(-1, m_szSocketBuf);
+		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
+
+	}
+	break;
+
+
+	case FD_CLOSE:
+	{
+		return false;
+	}
+	break;
+	}
+	return true;
+
+
+}
 
 // CMain message handlers
 
@@ -104,9 +144,6 @@ BOOL CMain::PreTranslateMessage(MSG* pMsg)
 			//wsprintf(buf, "%s",str.Trim());
 			memcpy(&buf[sizeof(int)],str.Trim(), 30);
 			sock.Send(buf, sizeof(int)+30);
-			sock.Recv(buf,30,0);
-			str = buf;
-			chattingvar.InsertString(-1, str);
 			SetDlgItemText(IDC_ChattingInput, _T(""));
 			return TRUE;
 		}
@@ -114,4 +151,66 @@ BOOL CMain::PreTranslateMessage(MSG* pMsg)
 	// 그외의 경우는 리턴
 
 	return CDialog::PreTranslateMessage(pMsg);
+}
+
+
+BOOL CMain::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	extern Sock sock;
+	sock.setHandle(this);
+	// 이벤트 등록
+	int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
+	if (SOCKET_ERROR == nRet) {
+		return false;
+	}
+	// TODO:  Add extra initialization here
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+//void CMain::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
+//{
+//	CDialog::OnActivate(nState, pWndOther, bMinimized);
+//
+//	// TODO: Add your message handler code here
+//}
+
+
+afx_msg LRESULT CMain::On27001(WPARAM wParam, LPARAM lParam)
+{
+	extern Sock sock;
+	//SOCKET sock = (SOCKET)wParam;
+	// 에러 체크
+	int nError = WSAGETSELECTERROR(lParam);
+	if (0 != nError) {
+		return false;
+	}
+	// 이벤트 체크
+	int nEvent = WSAGETSELECTEVENT(lParam);
+	switch (nEvent) {
+	case FD_READ:
+	{
+
+		sock.Recv(m_szSocketBuf, 30, 0);
+		//int nRecvLen = recv(sock, m_szSocketBuf,30, 0);
+		CString str = m_szSocketBuf;
+		UserList.InsertString(-1, m_szSocketBuf);
+		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, 27001, FD_READ | FD_CLOSE);
+
+	}
+	break;
+
+
+	case FD_CLOSE:
+	{
+		return false;
+	}
+	break;
+	}
+	return true;
+
+
 }

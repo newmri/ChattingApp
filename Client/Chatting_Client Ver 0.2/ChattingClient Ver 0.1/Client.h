@@ -20,16 +20,19 @@ private:
 	SOCKADDR_IN serveraddr;
 	User user;
 	UserS users;
+	HANDLE m_hWnd;
 	int num{};
 	const char* const SERVERIP = "127.0.0.1";
 	enum { SERVERPORT = 8000 };
 public:
 	Sock(void);
 	~Sock(void);
-
+	char m_buf[1024]{};
 	bool Init(void);
+	bool setHandle(HANDLE);
 	bool Connect(void);
 	int& getNum(void);
+	SOCKET& getSocket(void);
 	void Close(SOCKET*, bool);
 	bool CheckEnroll(void);
 	User& getUser(void);

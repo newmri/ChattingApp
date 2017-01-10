@@ -27,6 +27,8 @@ class CChattingServerVer02Dlg;
 enum enumOperation {OP_RECV, OP_SEND };
 // 데이터 구분
 enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
+// 유저의 위치 구분
+enum userLocation { MAIN, ROOM };
 // WSAOVERLAPPED 구조체 확장
 struct stOverlappedEx {
 	WSAOVERLAPPED m_wsaOverlapped; // Overlapped I/O 구조체
@@ -42,13 +44,17 @@ struct stClientInfo {
 	SOCKET m_socketClient; // Client와 연결되는 소켓
 	stOverlappedEx m_stRecvOverlappedEx; // RECV Overlapped I/O 작업을 위한 변수
 	stOverlappedEx m_stSendOverlappedEx; // SEND Overlapped I/O 작업을 위한 변수
-										 // 생성자에서 멤버 변수들을 초기화
+	userLocation m_uLocation; // 위치 종류
+	char* m_nickName;
+	// 생성자에서 멤버 변수들을 초기화
 	stClientInfo()
 	{
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
 		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
-		//ZeroMemory(&m_clientAddr, sizeof(SOCKADDR_IN));
+		ZeroMemory(&m_clientAddr, sizeof(SOCKADDR_IN));
 		m_socketClient = INVALID_SOCKET;
+		m_uLocation = MAIN;
+		m_nickName = nullptr;
 	}
 };
 class iocp

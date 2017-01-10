@@ -8,7 +8,7 @@
 
 
 
-
+#define MAX_STRINGLEN 10
 #define DB_ADDRESS "localhost"
 #define DB_ID "root"
 #define DB_PASS "a123123"
@@ -28,6 +28,6 @@ public:
 	bool Login(void);
 	void SetUser(User&);
 	void SetUserS(UserS&);
-
+	char* GetUserNickName(void);
 
 };
