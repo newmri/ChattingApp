@@ -26,7 +26,7 @@ class CChattingServerVer02Dlg;
 
 enum enumOperation {OP_RECV, OP_SEND };
 // 데이터 구분
-enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
+enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA, USERLIST};
 // 유저의 위치 구분
 enum userLocation { MAIN, ROOM };
 // WSAOVERLAPPED 구조체 확장
@@ -81,7 +81,7 @@ private:
 	// 소켓 버퍼
 	char m_szSocketBuf[MAX_BUFSIZE];
 	// 메세지 버퍼
-	char m_msgbuf[MAX_MSGSIZE];
+	char m_msgbuf[MAX_MSGSIZE+sizeof(int)];
 	// 회원 가입 정보 구조체
 	User user;
 	// 기타 구조체

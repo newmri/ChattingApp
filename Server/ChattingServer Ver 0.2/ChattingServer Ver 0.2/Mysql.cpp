@@ -97,7 +97,7 @@ char* Mysql::GetUserNickName(void)
 	m_res = mysql_use_result(&mysql);
 	row = mysql_fetch_row(m_res);
 
-	char* nickname = "a";
+	char* nickname = *row;
 	return nickname;
 
 

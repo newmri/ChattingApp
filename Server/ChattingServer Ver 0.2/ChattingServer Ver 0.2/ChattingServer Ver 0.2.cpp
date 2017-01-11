@@ -1,4 +1,5 @@
 
+
 // ChattingServer Ver 0.2.cpp : Defines the class behaviors for the application.
 //
 
@@ -410,20 +411,26 @@ void iocp::WokerThread()
 				SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
 				if (true == m_retval) {
 					pClientInfo->m_uLocation = ROOM;
-					//char* nickname = mysql.GetUserNickName();
-					/*for (int i = 0; i < MAX_CLIENT; i++) {
-						if (ROOM == pClientInfo[i].m_uLocation) {
-							SendMsg(&pClientInfo[i], nickname, MAX_MSGSIZE);
+					char buf[MAX_MSGSIZE + sizeof(int)]{};
+					int type = USERLIST;
+					char* nickname = mysql.GetUserNickName();
+					memcpy(buf, &type, sizeof(int));
+					memcpy(&buf[sizeof(int)], nickname, MAX_STRINGLEN);
+					for (int i = 0; i < MAX_CLIENT; i++) {
+						if (ROOM == m_pClientInfo[i].m_uLocation) {
+							SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
 						}
-					}*/
+					}
 				}
 			}
 			else if (CHATTINGDATA == user.type) {
-				memcpy(m_msgbuf, &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE);
+				int type = CHATTINGDATA;
+				memcpy(m_msgbuf, &type, sizeof(int));
+				memcpy(&m_msgbuf[sizeof(int)], &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE);
 				for (int i = 0; i < MAX_CLIENT; i++) {
-					if (INVALID_SOCKET != pClientInfo[i].m_socketClient) {
-						if (ROOM == pClientInfo[i].m_uLocation) {
-							SendMsg(&pClientInfo[i], m_msgbuf, MAX_MSGSIZE);
+					if (INVALID_SOCKET != m_pClientInfo[i].m_socketClient) {
+						if (ROOM == m_pClientInfo[i].m_uLocation) {
+							SendMsg(&m_pClientInfo[i], m_msgbuf, MAX_MSGSIZE+sizeof(int));
 						}
 					}
 				}
