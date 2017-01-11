@@ -84,10 +84,22 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 	case FD_READ:
 	{
 
-		sock.Recv(m_szSocketBuf, 30, 0);
+		sock.Recv(m_szSocketBuf, 34, 0);
 		//int nRecvLen = recv(sock, m_szSocketBuf,30, 0);
-		CString str = m_szSocketBuf;
-		chattingvar.InsertString(-1, m_szSocketBuf);
+		int type{};
+		char buf[30]{};
+		CString str;
+		memcpy(&type, m_szSocketBuf, sizeof(int));
+		if (USERLIST == type) {
+			memcpy(buf, &m_szSocketBuf[sizeof(int)], 10);
+			str = buf;
+			UserList.InsertString(-1, buf);
+		}
+		else if (CHATTINGDATA == type) {
+			memcpy(buf, &m_szSocketBuf[sizeof(int)], 30);
+			str = buf;
+			chattingvar.InsertString(-1, buf);
+		}
 		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
 
 	}

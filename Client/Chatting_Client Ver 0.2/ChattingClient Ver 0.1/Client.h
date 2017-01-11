@@ -2,7 +2,7 @@
 #include <afx.h>
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32")
-enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA};
+enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA,USERLIST};
 struct User {
 	int type{};
 	CString id;
