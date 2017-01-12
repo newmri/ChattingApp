@@ -87,7 +87,7 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 		sock.Recv(m_szSocketBuf, 34, 0);
 		//int nRecvLen = recv(sock, m_szSocketBuf,30, 0);
 		int type{};
-		char buf[30]{};
+		char buf[20]{};
 		CString str;
 		memcpy(&type, m_szSocketBuf, sizeof(int));
 		if (USERLIST == type) {
@@ -96,9 +96,14 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 			UserList.InsertString(-1, buf);
 		}
 		else if (CHATTINGDATA == type) {
-			memcpy(buf, &m_szSocketBuf[sizeof(int)], 30);
-			str = buf;
-			chattingvar.InsertString(-1, buf);
+			//memcpy(buf, &m_szSocketBuf[sizeof(int)], 30);
+			memcpy(&buf, &m_szSocketBuf[sizeof(int)], 10);
+			int len = strlen(buf);
+			buf[len] = ':';
+			str.Append(buf);
+			memcpy(&buf, &m_szSocketBuf[sizeof(int)+10], 20);
+			str.Append(buf);
+			chattingvar.InsertString(-1, str);
 		}
 		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
 
@@ -154,8 +159,13 @@ BOOL CMain::PreTranslateMessage(MSG* pMsg)
 			int type= CHATTINGDATA;
 			memcpy(buf,&type,sizeof(int));
 			//wsprintf(buf, "%s",str.Trim());
-			memcpy(&buf[sizeof(int)],str.Trim(), 30);
-			sock.Send(buf, sizeof(int)+30);
+			buf[4] = ' ';
+			memcpy(&buf[sizeof(int)+1],str.Trim(), 20-1);
+			if (_tcslen(str) > 19) 
+				MessageBox(_T("19자 까지 입력 가능 합니다"), _T("전송 실패"), MB_OK);
+			
+			if(_tcslen(str) != 0 && _tcslen(str)<20)
+				sock.Send(buf, sizeof(int)+20);
 			SetDlgItemText(IDC_ChattingInput, _T(""));
 			return TRUE;
 		}
