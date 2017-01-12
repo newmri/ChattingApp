@@ -412,21 +412,33 @@ void iocp::WokerThread()
 				if (true == m_retval) {
 					pClientInfo->m_uLocation = ROOM;
 					char buf[MAX_MSGSIZE + sizeof(int)]{};
+					char oldbuf[MAX_MSGSIZE + sizeof(int)]{};
 					int type = USERLIST;
-					char* nickname = mysql.GetUserNickName();
+					pClientInfo->m_nickName = mysql.GetUserNickName();
 					memcpy(buf, &type, sizeof(int));
-					memcpy(&buf[sizeof(int)], nickname, MAX_STRINGLEN);
+					memcpy(oldbuf, &type, sizeof(int));
+					memcpy(&buf[sizeof(int)], pClientInfo->m_nickName, MAX_STRINGLEN);
+					SendMsg(pClientInfo, buf, MAX_MSGSIZE + sizeof(int));
 					for (int i = 0; i < MAX_CLIENT; i++) {
 						if (ROOM == m_pClientInfo[i].m_uLocation) {
-							SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
+							if (m_pClientInfo[i].m_nickName != pClientInfo->m_nickName) {
+								memcpy(&oldbuf[sizeof(int)], m_pClientInfo[i].m_nickName, MAX_STRINGLEN);
+		
+								SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
+								//SendMsg(pClientInfo, oldbuf, MAX_MSGSIZE + sizeof(int));
+								
+
+							}
 						}
 					}
+				
 				}
 			}
 			else if (CHATTINGDATA == user.type) {
 				int type = CHATTINGDATA;
 				memcpy(m_msgbuf, &type, sizeof(int));
-				memcpy(&m_msgbuf[sizeof(int)], &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE);
+				memcpy(&m_msgbuf[sizeof(int)], pClientInfo->m_nickName, MAX_STRINGLEN);
+				memcpy(&m_msgbuf[sizeof(int)+MAX_STRINGLEN], &pOverlappedEx->m_szBuf[sizeof(int)], MAX_MSGSIZE- MAX_STRINGLEN);
 				for (int i = 0; i < MAX_CLIENT; i++) {
 					if (INVALID_SOCKET != m_pClientInfo[i].m_socketClient) {
 						if (ROOM == m_pClientInfo[i].m_uLocation) {
