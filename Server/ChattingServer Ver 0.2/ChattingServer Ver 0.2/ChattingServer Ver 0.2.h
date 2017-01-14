@@ -90,6 +90,7 @@ private:
 	Mysql mysql;
 	// return º¯¼ö
 	bool m_retval; 
+	bool m_err;
 
 public:
 	iocp(void);

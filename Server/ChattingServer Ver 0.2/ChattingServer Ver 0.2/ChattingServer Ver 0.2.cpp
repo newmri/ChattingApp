@@ -404,7 +404,9 @@ void iocp::WokerThread()
 
 			if (CHATTINGDATA != user.type && LOGIN != user.type) {
 				memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
+				if(true!=m_err)
 				SendMsg(pClientInfo, &pOverlappedEx->m_szBuf[0], sizeof(bool));
+				m_err = false;
 			}
 			else if (LOGIN == user.type) {
 				memcpy(&pOverlappedEx->m_szBuf[0], &m_retval, sizeof(bool));
@@ -416,21 +418,23 @@ void iocp::WokerThread()
 					int type = USERLIST;
 					pClientInfo->m_nickName = mysql.GetUserNickName();
 					memcpy(buf, &type, sizeof(int));
-					memcpy(oldbuf, &type, sizeof(int));
 					memcpy(&buf[sizeof(int)], pClientInfo->m_nickName, MAX_STRINGLEN);
-					SendMsg(pClientInfo, buf, MAX_MSGSIZE + sizeof(int));
 					for (int i = 0; i < MAX_CLIENT; i++) {
 						if (ROOM == m_pClientInfo[i].m_uLocation) {
 							if (m_pClientInfo[i].m_nickName != pClientInfo->m_nickName) {
+								type = USERLIST;
+								memcpy(oldbuf, &type, sizeof(int));
 								memcpy(&oldbuf[sizeof(int)], m_pClientInfo[i].m_nickName, MAX_STRINGLEN);
-		
+
+								SendMsg(pClientInfo, oldbuf, MAX_MSGSIZE + sizeof(int));
 								SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
-								//SendMsg(pClientInfo, oldbuf, MAX_MSGSIZE + sizeof(int));
+								
 								
 
 							}
 						}
 					}
+					SendMsg(pClientInfo, buf, MAX_MSGSIZE + sizeof(int));
 				
 				}
 			}
@@ -482,7 +486,7 @@ void iocp::DestroyThread()
 	WaitForSingleObject(m_hAccepterThread, INFINITE);
 
 
-}
+}	
 bool iocp::MysqlInit()
 {
 	bool retval = mysql.Init();
@@ -498,6 +502,10 @@ bool iocp::DivideUserInfo(char buf[MAX_BUFSIZE], stClientInfo* pClientInfo)
 	if (ENROLL == user.type) {
 		memcpy(&user.id, &buf[sizeof(int)], MAX_STRINGLEN);
 		memcpy(&user.pwd, &buf[sizeof(int) + MAX_STRINGLEN], MAX_STRINGLEN);
+			if (0 == user.pwd[0]) {
+			m_err = true;
+			return false;
+		}
 		memcpy(&user.nickname, &buf[sizeof(int) + MAX_STRINGLEN * 2], MAX_STRINGLEN);
 		mysql.SetUser(user);
 		m_retval = mysql.Enroll();
