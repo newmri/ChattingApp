@@ -189,9 +189,9 @@ void CChattingClientVer01Dlg::OnBnClickedLgoin()
 	sock.Send(buf, sizeof(int) + 20);
 	sock.Recv(&buf[0], sizeof(bool), 0);
 	if (true == buf[0]) {
-		MessageBox(_T("환영합니다"), _T("로그인 성공"), MB_OK);
+		CMain Main;	
+		//MessageBox(_T("환영합니다"), _T("로그인 성공"), MB_OK);
 		::SendMessage(this->m_hWnd, WM_CLOSE, NULL, NULL);
-		CMain Main;
 		Main.DoModal();
 	}
 	else if (false == buf[0])

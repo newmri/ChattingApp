@@ -87,7 +87,7 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 		sock.Recv(m_szSocketBuf, 34, 0);
 		//int nRecvLen = recv(sock, m_szSocketBuf,30, 0);
 		int type{};
-		char buf[20]{};
+		char buf[34]{};
 		CString str;
 		memcpy(&type, m_szSocketBuf, sizeof(int));
 		if (USERLIST == type) {
@@ -105,8 +105,11 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 			str.Append(buf);
 			chattingvar.InsertString(-1, str);
 		}
+		//else break;
 		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
-
+		if (SOCKET_ERROR == nRet) {
+			return false;
+		}
 	}
 	break;
 

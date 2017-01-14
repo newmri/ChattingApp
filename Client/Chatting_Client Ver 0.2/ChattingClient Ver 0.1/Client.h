@@ -2,6 +2,7 @@
 #include <afx.h>
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32")
+#pragma comment(lib, "user32.lib")
 enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA,USERLIST};
 struct User {
 	int type{};
