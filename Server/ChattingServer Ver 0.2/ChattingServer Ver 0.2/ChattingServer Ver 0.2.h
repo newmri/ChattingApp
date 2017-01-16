@@ -26,9 +26,9 @@ class CChattingServerVer02Dlg;
 
 enum enumOperation {OP_RECV, OP_SEND };
 // 데이터 구분
-enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA, USERLIST};
+enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA, USERLIST,LOGOUT};
 // 유저의 위치 구분
-enum userLocation { MAIN, ROOM };
+enum userLocation { MAIN, ROOM,EXIT };
 // WSAOVERLAPPED 구조체 확장
 struct stOverlappedEx {
 	WSAOVERLAPPED m_wsaOverlapped; // Overlapped I/O 구조체

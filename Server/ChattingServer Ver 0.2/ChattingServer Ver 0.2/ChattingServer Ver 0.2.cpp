@@ -383,6 +383,16 @@ void iocp::WokerThread()
 		// client°¡ Á¢¼ÓÀ» ²÷¾úÀ»¶§
 		if (FALSE == bSuccess && 0 == dwIoSize) {
 			m_pMainDlg->OutputMsg("socket(%d) Á¢¼Ó ²÷±è",pClientInfo->m_socketClient);
+			pClientInfo->m_uLocation = EXIT;
+			int type = LOGOUT;
+			char buf[sizeof(int)+MAX_MSGSIZE];
+			memcpy(buf, &type, sizeof(int));
+			memcpy(&buf[sizeof(int)], pClientInfo->m_nickName, MAX_STRINGLEN);
+			for (int i = 0; i < MAX_CLIENT; i++) {
+				if (ROOM == m_pClientInfo[i].m_uLocation) {
+					SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
+				}
+			}
 			CloseSocket(pClientInfo);
 			continue;
 		}
