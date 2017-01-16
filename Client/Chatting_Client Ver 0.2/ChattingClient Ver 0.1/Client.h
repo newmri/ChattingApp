@@ -3,7 +3,7 @@
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32")
 #pragma comment(lib, "user32.lib")
-enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA,USERLIST};
+enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA,USERLIST,LOGOUT};
 struct User {
 	int type{};
 	CString id;

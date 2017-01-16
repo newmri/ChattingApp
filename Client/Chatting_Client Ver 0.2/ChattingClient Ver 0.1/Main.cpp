@@ -105,6 +105,12 @@ LRESULT CMain::OnSocketMsg(WPARAM wParam, LPARAM lParam)
 			str.Append(buf);
 			chattingvar.InsertString(-1, str);
 		}
+		else if (LOGOUT == type) {
+			memcpy(buf, &m_szSocketBuf[sizeof(int)], 10);
+			str = buf;
+			UINT index=UserList.FindString(-1, str);
+			UserList.DeleteString(index);
+		}
 		//else break;
 		int nRet = WSAAsyncSelect(sock.getSocket(), m_hWnd, WM_SOCKETMSG, FD_READ | FD_CLOSE);
 		if (SOCKET_ERROR == nRet) {
