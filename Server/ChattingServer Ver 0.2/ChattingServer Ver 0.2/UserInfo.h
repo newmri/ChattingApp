@@ -2,7 +2,7 @@
 #define MAX_STRINGLEN 10
 // 가입 하기 위한 유저 정보
 struct User {
-	int type;
+	int type{ -1 };
 	char id[MAX_STRINGLEN];
 	char nickname[MAX_STRINGLEN];
 	char pwd[MAX_STRINGLEN];
