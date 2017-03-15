@@ -29,6 +29,11 @@ enum enumOperation {OP_RECV, OP_SEND };
 enum { ENROLL = 1, SECESSION, LOGIN, CHATTINGDATA, USERLIST,LOGOUT};
 // 유저의 위치 구분
 enum userLocation { MAIN, ROOM,EXIT };
+
+struct Temp
+{
+	char m_buf[MAX_BUFSIZE];
+};
 // WSAOVERLAPPED 구조체 확장
 struct stOverlappedEx {
 	WSAOVERLAPPED m_wsaOverlapped; // Overlapped I/O 구조체

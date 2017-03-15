@@ -311,8 +311,18 @@ bool iocp::SendMsg(stClientInfo* pClientInfo, char* pMsg, int nLen)
 	pClientInfo->m_stRecvOverlappedEx.m_wsaBuf.buf = pClientInfo->m_stSendOverlappedEx.m_szBuf;
 	pClientInfo->m_stRecvOverlappedEx.m_eOperation = OP_SEND;
 
-	int nRet = WSASend(pClientInfo->m_socketClient, &(pClientInfo->m_stRecvOverlappedEx.m_wsaBuf), 1, &dwRecvNumBytes, 0, (LPWSAOVERLAPPED)&(pClientInfo->m_stRecvOverlappedEx), NULL);
+	// 테스트 영역
 
+	stOverlappedEx* temp = new stOverlappedEx;
+
+	memset(temp, 0, sizeof(stOverlappedEx));
+	temp->m_wsaBuf.len = nLen;
+	temp->m_wsaBuf.buf = pClientInfo->m_stSendOverlappedEx.m_szBuf;
+	temp->m_eOperation = OP_SEND;
+
+
+	//int nRet = WSASend(pClientInfo->m_socketClient, &(pClientInfo->m_stRecvOverlappedEx.m_wsaBuf), 1, &dwRecvNumBytes, 0, (LPWSAOVERLAPPED)&(pClientInfo->m_stRecvOverlappedEx), NULL);
+	int nRet = WSASend(pClientInfo->m_socketClient, &(temp->m_wsaBuf), 1, &dwRecvNumBytes, 0, (LPWSAOVERLAPPED)(temp), NULL);
 	// socket_error이면 클라이언트가 끊어진걸로 처리
 	if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING)) {
 		m_pMainDlg->OutputMsg("[에러] WSARecv()함수 실패: %d", WSAGetLastError());
@@ -431,22 +441,33 @@ void iocp::WokerThread()
 					pClientInfo->m_nickName = mysql.GetUserNickName();
 					memcpy(buf, &type, sizeof(int));
 					memcpy(&buf[sizeof(int)], pClientInfo->m_nickName, MAX_STRINGLEN);
-					for (int i = 0; i < MAX_CLIENT; i++) {
+
+					for (int i = 0; i < m_nClientCnt; ++i) {
 						if (ROOM == m_pClientInfo[i].m_uLocation) {
 							if (m_pClientInfo[i].m_nickName != pClientInfo->m_nickName) {
 								type = USERLIST;
 								memcpy(oldbuf, &type, sizeof(int));
 								memcpy(&oldbuf[sizeof(int)], m_pClientInfo[i].m_nickName, MAX_STRINGLEN);
 
-								// 이상
+								// 새로 들어온 클라 한테 기존 유저의 닉네임을 전송
 								SendMsg(pClientInfo, oldbuf, MAX_MSGSIZE + sizeof(int));
+								// 기존 유저 한테 새로 들어온 클라 닉네임 전송
 								SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
-								
-								
 
+								//Sleep(100);
+								
+								// 전송 버퍼가 하나라서
+								// 같은 버퍼에 연속으로 전송을 하면
+								// 전송 중에 버퍼에 데이터가 덮어씌어져서 오류가 뜨는 것 같음
+								// Ex) 1번째 send로 데이터를 전송 중에
+								// 2번째 send가 진행되면 1번째에 전송중인게 2번으로 덮어씌어짐
+								// 해결법: 1. 전송 직전에 전송 버퍼를 새로 생성
+								//	      2. 새로운 버퍼에 데이터를 넣고 전송
+								//        3. 전송이 끝나면 새로 만든 버퍼 삭제
 							}
 						}
 					}
+					//Sleep(100);
 					SendMsg(pClientInfo, buf, MAX_MSGSIZE + sizeof(int));
 				
 				}
@@ -471,9 +492,10 @@ void iocp::WokerThread()
 			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %d", dwIoSize, pOverlappedEx->m_szBuf[0]);
 			else if (CHATTINGDATA == user.type)
 			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %s", dwIoSize, m_msgbuf);
-			
+			delete lpOverlapped;
 			BindRecv(pClientInfo);
 		}
+
 		// 예외
 		else {
 			m_pMainDlg->OutputMsg("socket(%d)에서의 예외상황", pClientInfo->m_socketClient);
