@@ -454,8 +454,8 @@ void iocp::WokerThread()
 								// 기존 유저 한테 새로 들어온 클라 닉네임 전송
 								SendMsg(&m_pClientInfo[i], buf, MAX_MSGSIZE + sizeof(int));
 
-								//Sleep(100);
-								
+								Sleep(100);
+
 								// 전송 버퍼가 하나라서
 								// 같은 버퍼에 연속으로 전송을 하면
 								// 전송 중에 버퍼에 데이터가 덮어씌어져서 오류가 뜨는 것 같음
@@ -465,9 +465,11 @@ void iocp::WokerThread()
 								//	      2. 새로운 버퍼에 데이터를 넣고 전송
 								//        3. 전송이 끝나면 새로 만든 버퍼 삭제
 							}
+						
 						}
 					}
-					//Sleep(100);
+
+		
 					SendMsg(pClientInfo, buf, MAX_MSGSIZE + sizeof(int));
 				
 				}
@@ -488,10 +490,24 @@ void iocp::WokerThread()
 			
 		}
 		else if (OP_SEND == pOverlappedEx->m_eOperation) {
-			if (CHATTINGDATA != user.type) 
-			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %d", dwIoSize, pOverlappedEx->m_szBuf[0]);
-			else if (CHATTINGDATA == user.type)
-			m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %s", dwIoSize, m_msgbuf);
+			if (CHATTINGDATA != user.type) {
+				switch (user.type) {
+				case ENROLL:
+					m_pMainDlg->OutputMsg("[송신] bytes: %d [타입] 회원가입", dwIoSize);
+					break;
+				case SECESSION:
+					m_pMainDlg->OutputMsg("[송신] bytes: %d [타입] 회원탈퇴", dwIoSize);
+					break;
+				case LOGIN:
+					m_pMainDlg->OutputMsg("[송신] bytes: %d [타입] 로그인", dwIoSize);
+					break;
+				}
+			
+			}
+			else if (CHATTINGDATA == user.type) {
+				char* pmsg = &m_msgbuf[sizeof(int) + MAX_STRINGLEN];
+				m_pMainDlg->OutputMsg("[송신] bytes: %d, msg: %s", dwIoSize,pmsg);
+			}
 			delete lpOverlapped;
 			BindRecv(pClientInfo);
 		}
